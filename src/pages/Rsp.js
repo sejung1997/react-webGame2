@@ -40,6 +40,7 @@ const Rsp = () => {
     } else setRound([winner]);
   };
   const computerPick = (i) => () => {
+    if (inputEl.current.value === "") return alert("금액을 입력해주세요");
     let temp = Math.floor(Math.random() * 100) % 3;
     console.log(temp);
     setPick([rsp[temp], rsp[i]]);
@@ -159,7 +160,6 @@ const Rsp = () => {
                     fontSize: "30px",
                   }}
                   onClick={computerPick(index)}
-                  disabled={inputEl.current?.value ? false : true}
                 >
                   {el}
                 </button>

@@ -48,6 +48,7 @@ export default function FiveStone() {
   };
 
   const onClickGround = (row, column) => () => {
+    if (playGround[row][column]) return;
     const temp = [...playGround];
     temp[row][column] = isBlackTurn ? 1 : -1;
     if (checkWinner(row, column) === "end") setOver(true);
@@ -56,7 +57,13 @@ export default function FiveStone() {
       setPlayGround(temp);
     }
   };
-  const reset = () => {};
+  const reset = () => {
+    setPlayGround(
+      Array.from({ length: 10 }, () => Array.from({ length: 10 }, () => 0))
+    );
+    setIsBlackTurn(true);
+    setOver(false);
+  };
   return (
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
@@ -98,7 +105,7 @@ export default function FiveStone() {
             style={{ display: "flex", width: "100%", height: "10%" }}
           >
             {row.map((column, y) => (
-              <span
+              <button
                 key={y}
                 style={{
                   width: "10%",
@@ -107,12 +114,14 @@ export default function FiveStone() {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
+                  backgroundColor: "#fff",
+                  fontSize: "30px",
+                  fontWeight: "bold",
                 }}
                 onClick={onClickGround(x, y)}
-                disabled
               >
-                {column ? (column === -1 ? "○" : "●") : column}
-              </span>
+                {column ? (column === -1 ? "○" : "●") : ""}
+              </button>
             ))}
           </div>
         ))}
