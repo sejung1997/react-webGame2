@@ -1,14 +1,8 @@
-/* eslint-disable import/no-unresolved */
-import React, { useRef, useEffect, useState } from "react";
-import { SwiperSlide } from "swiper/react";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-import styled from "styled-components";
-import Carousel from "framer-motion-carousel";
+/* eslint-disable react/button-has-type */
+import React, { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 
-const items = [
+const item = [
   {
     key: 0,
     source: {
@@ -87,206 +81,185 @@ const items = [
     href: "/review/recent",
   },
 ];
-const Container = styled.div`
-  border: 2px solid red;
-  width: calc(360px * 5 + 60px * 4);
-  height: 480px;
-
-  color: #fff;
-  .slick-slide {
-    width: 420px !important;
-    height: 480px !important;
-  }
-`;
-const SliderWrapper = styled.div`
-  width: 560px !important;
-  height: 480px;
-  border: 3px solid green;
-`;
-
-const HomeBestOfBestList = () => {
-  const [width, setWidth] = useState(0);
-  // const variants = {
-  //   enthideer: (direction: number) => {
-  //     return {
-  //       x: direction > 0 ? 1000 : -1000,
-  //       opacity: 0
-  //     };
-  //   },
-  //   reveal: {
-  //     zIndex: 1,
-  //     x: 0,
-  //     opacity: 1
-  //   },
-  //   close: (direction: number) => {
-  //     return {
-  //       zIndex: 0,
-  //       x: direction < 0 ? 1000 : -1000,
-  //       opacity: 0
-  //     };
-  //   }
-  // };
-  const [index, setIndex] = useState(0);
-  const boxRef = useRef(null);
-  useEffect(() => {
-    // if (!boxRef.current) return;
-    // setWidth(boxRef.current?.clientWidth);
-    // console.log(1000 - boxRef.current?.clientWidth);
-    setInterval(() => {
-      setIndex((PREV) => PREV + 1);
-    }, [1000]);
-    return () =>
-      setInterval(() => {
-        setIndex((PREV) => PREV + 1);
-      }, [1000]);
-  }, []);
-  console.log(index);
-  // const variants = {
-  //   // hide: { left: 0 },
-  //   reveal: { right: 0 },
-  // };
-  // const variants2 = {
-  //   hide: { left: "-1000px" },
-  //   reveal: {left: 0 },
-  // };
-  // const variants3 = {
-  //   // hide: { left: 0 },
-  //   reveal: { right: 0 },
-  // };
+export default function Test() {
+  const [items, setItems] = useState(item);
+  const [move, setMove] = useState(0);
+  // const [time, setTime] = useState(0);
+  const [hover, setHover] = useState(false);
+  const motionRef = useRef(null);
+  const moveTimerRef = useRef(null);
+  const onclick = () => {
+    const time = -move / 100 / 2;
+    console.log(time, "move");
+    const temp = [...items];
+    temp.push(temp[time]);
+    temp[time] = null;
+    setItems(temp);
+  };
   const controls = useAnimationControls();
+  console.log(controls, "controls");
+
+  const variants = React.useMemo(
+    () => ({
+      hide: () => {
+        console.log(move, "move1");
+
+        if (move === 0) return;
+        else return { left: `${move}px` };
+      },
+      reveal: () => {
+        // if (motionRef.current)
+        // console.log(motionRef.current.offsetLeft, "move2");
+        console.log(move, hover, "move2");
+        if (move === 0) return;
+        if (hover) return { left: `${move}px` };
+        else return { left: `${move - 100}px` };
+      },
+      hover: () => {
+        console.log(controls, "controls");
+        controls.stop();
+        // if (hover) return;
+        // setHover(true);
+        // return { left: `-${move - 500}px` };
+      },
+    }),
+
+    [move]
+  );
 
   useEffect(() => {
-    controls.start({ scale: 2 });
+    // setInterval(() => {
+    //   console.log('setInterval');
+    //   const temp = [...items];
+    //   temp.push(temp.shift());
+    //   setItems(temp);
+    // }, 1000);
+    // return () =>
+    //   setInterval(() => {
+    //     const first = items.shift();
+    //     items.push(first);
+    //   }, 1000);
+    // if (motionRef && motionRef.current) {
+    //   motionRef.current.addEventListener('');
+    // }
   }, []);
-  return (
-    <>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <div>dd</div>
-      <motion.div animate={controls}>motion.div</motion.div>
-    </>
-  );
-  // return (
-  {
-    /* <img scr="/img/0.jpg" alt="0" />
-     */
-  }
+  const changeMove = () => {
+    console.log(move, "setmove");
+    setMove((prev) => prev - 100);
+  };
+  useEffect(() => {
+    moveTimerRef.current = setInterval(changeMove, 1000);
+    console.log(moveTimerRef.current, "moveInterval");
+    return () => clearInterval(moveTimerRef.current);
+  }, []);
+  // useEffect(() => {
+  //   if (!hover) return;
+  //   console.log(moveInterval, "moveInterval");
 
-  {
-    /* <div>
-        <motion.div
-          style={{ x: 0 }}
-          animate={{ x: 10 }}
-          transition={{
-            delay: 0,
-            duration: 1,
-            repeat: Infinity,
-          }}
-        >
-          {index}
-        </motion.div>
-      </div> */
-  }
-  {
-    /* {width && (
+  //   return clearInterval(moveInterval);
+  // }, [hover]);
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     if (!hover) setTime((prev) => prev + 1);
+  //   }, 2000);
+  //   return () =>
+  //     setInterval(() => {
+  //       setTime((prev) => prev + 1);
+  //     }, 2000);
+  // }, []);
+  useEffect(() => {
+    console.log(motionRef, "motionRef");
+    if ((move / 100) % 2) return;
+    onclick();
+  }, [move]);
+  useEffect(() => {
+    controls.set({ left: `${move}px` });
+    controls.start({ left: `${move - 100}px` });
+  }, [move]);
+
+  return (
+    <AnimatePresence>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <div
           style={{
-            display: "flex",
-            justifyContent: "center",
+            position: "relative",
+            border: "1px solid red",
+            width: "1720px",
           }}
         >
-          <div
-            style={{
-              position: "relative",
-              width: "1000px",
-              border: "1px solid red",
-              marin: "0 auto",
-            }}
-          >
-            <motion.div
-            ref={boxRef}
-            style={{
-              display: "flex",
-              border: "1px solid black",
-              position: "absolute",
-            }}
+          <motion.div
+            ref={motionRef}
+            style={{ display: "flex", position: "absolute" }}
             variants={variants}
-            initial="hide"
-            animate="reveal"
+            // initial="hide"
+            // animate="reveal"
+            whileHover="hover"
+            animate={controls}
+            onMouseEnter={() => {
+              controls.stop();
+              clearInterval(moveTimerRef.current);
+
+              console.log("onMouseEnter");
+            }}
+            onMouseLeave={() => {
+              controls.start({ left: `${move - 100}px` });
+              moveTimerRef.current = setInterval(changeMove, 1000);
+            }}
             transition={{
               delay: 0,
-              duration: 6,
+              duration: 1,
               // repeat: Infinity,
+              // repeatDelay: 0,
+              ease: "linear",
             }}
           >
             {items?.map((item, index) => {
+              if (item === null) return <div style={{ width: "200px" }}></div>;
               return (
-                <SliderWrapper>
-                  <div>{item.title}</div>
-                </SliderWrapper>
+                <div style={{ border: "1px solid red", width: "200px" }}>
+                  <img src={item.source.default} alt={item.title} />
+                  <div>
+                    <h1>{item.title}</h1>
+                    <h2>h2h2h2h2h2h2h2</h2>
+                    <h3>h3h3h3h3h3h3h3</h3>
+                  </div>
+                  <div className="additional">additional text</div>
+                </div>
               );
             })}
           </motion.div>
-            <motion.div
-              ref={boxRef}
-              style={{
-                display: "flex",
-                border: "1px solid black",
-                position: "absolute",
-              }}
-              variants={variants2}
-              initial="hide"
-              animate="reveal"
-              transition={{
-                delay: 0,
-                duration: 6,
-                // repeat: Infinity,
-              }}
-            >
-              {items?.map((item, index) => {
-                return (
-                  <SliderWrapper>
-                    <div>{item.title}</div>
-                  </SliderWrapper>
-                );
-              })}
-            </motion.div>
-            <motion.div
-              ref={boxRef}
-              style={{
-                display: "flex",
-                border: "1px solid black",
-                position: "absolute",
-              }}
-              variants={variants2}
-              initial="hide"
-              animate="reveal"
-              transition={{
-                delay: 6,
-                duration: 6,
-                // repeat: Infinity,
-              }}
-            >
-              {items?.map((item, index) => {
-                return (
-                  <SliderWrapper>
-                    <div>{item.title}</div>
-                  </SliderWrapper>
-                );
-              })}
-            </motion.div>
-          </div>
+          {/* <motion.div
+            // ref={motionRef}
+            style={{ display: 'flex', position: 'absolute' }}
+            variants={variants}
+            initial="hide"
+            animate="reveal"
+            // onHoverStart={() => }
+            transition={{ delay: 10, duration: 10, property: 'left', repeat: 1, repeatType: 'loop' }}
+          >
+            {items?.map((item, index) => {
+              if (item === null) return <div style={{ width: '200px' }}></div>;
+              return (
+                <div style={{ border: '1px solid red', width: '200px' }}>
+                  <img src={item.source.default} alt={item.title} />
+                  <div>
+                    <h1>{item.title}</h1>
+                    <h2>h2h2h2h2h2h2h2</h2>
+                    <h3>h3h3h3h3h3h3h3</h3>
+                  </div>
+                  <div className="additional">additional text</div>
+                </div>
+              );
+            })}
+          </motion.div> */}
         </div>
-      )} */
-  }
-  // );
-};
-
-export default HomeBestOfBestList;
+      </div>
+      <button
+        style={{ display: "flex", position: "absolute" }}
+        onClick={onclick}
+      >
+        click
+      </button>
+    </AnimatePresence>
+  );
+}
