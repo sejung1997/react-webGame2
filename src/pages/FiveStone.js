@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 export default function FiveStone() {
   const [playGround, setPlayGround] = useState(
-    Array.from({ length: 10 }, () => Array.from({ length: 10 }, () => 0))
+    Array.from({ length: 20 }, () => Array.from({ length: 20 }, () => 0))
   );
   const [isBlackTurn, setIsBlackTurn] = useState(true);
   const [over, setOver] = useState(false);
@@ -11,6 +11,7 @@ export default function FiveStone() {
   const serialCheck = ([curA, curB], [actA, actB], serialNum) => {
     console.log(serialNum);
     if (curA + actA < 0 || curB + actB < 0) return serialNum;
+    if (curA + actA > 19 || curB + actB > 19) return serialNum;
     if (playGround[curA + actA][curB + actB] === curValue)
       return serialCheck(
         [curA + actA, curB + actB],
@@ -20,6 +21,7 @@ export default function FiveStone() {
     else return serialNum;
   };
   const checkWinner = (row, column) => {
+    console.log(row, column, "click1");
     if (
       serialCheck([row, column], [1, 0], 0) +
         serialCheck([row, column], [-1, 0], 0) >=
@@ -48,9 +50,13 @@ export default function FiveStone() {
   };
 
   const onClickGround = (row, column) => () => {
+    console.log(checkWinner(row, column), playGround[row][column], "click2");
+
     if (playGround[row][column]) return;
     const temp = [...playGround];
     temp[row][column] = isBlackTurn ? 1 : -1;
+    console.log(checkWinner(row, column), playGround[row][column], "click3");
+
     if (checkWinner(row, column) === "end") setOver(true);
     else {
       setIsBlackTurn((prev) => !prev);
@@ -96,7 +102,7 @@ export default function FiveStone() {
           display: "flex",
           flexDirection: "column",
           aspectRatio: 1,
-          width: "500px",
+          width: "1000px",
         }}
       >
         {playGround.map((row, x) => (

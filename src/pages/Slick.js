@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 
 const item = [
@@ -81,76 +81,65 @@ const item = [
     href: "/review/recent",
   },
 ];
+// 슬라이드 넓이 + 여백 설정
+const slideWidth = 200;
+// slideWidth를 몇 초 동안 이동할지 설정
+const duration = 2;
 export default function Test() {
   const [items, setItems] = useState(item);
   const [move, setMove] = useState(0);
-  // const [time, setTime] = useState(0);
-  const [hover, setHover] = useState(false);
   const motionRef = useRef(null);
-  const moveTimerRef = useRef(null);
-  const onclick = () => {
-    const time = -move / 100 / 2;
-    console.log(time, "move");
-    const temp = [...items];
-    temp.push(temp[time]);
-    temp[time] = null;
-    setItems(temp);
-  };
+  const moveTimer = useRef(null);
+  const RestPopIndex = useRef(0);
+  const popIndex = useRef(0);
+
   const controls = useAnimationControls();
-  console.log(controls, "controls");
 
-  const variants = React.useMemo(
-    () => ({
-      hide: () => {
-        console.log(move, "move1");
+  const onclick = useCallback(() => {
+    console.log(popIndex.current, "move");
+    const temp = [...items];
+    temp.push(temp[popIndex.current]);
+    temp[popIndex.current] = null;
+    setItems(temp);
+  }, [popIndex.current, items]);
 
-        if (move === 0) return;
-        else return { left: `${move}px` };
-      },
-      reveal: () => {
-        // if (motionRef.current)
-        // console.log(motionRef.current.offsetLeft, "move2");
-        console.log(move, hover, "move2");
-        if (move === 0) return;
-        if (hover) return { left: `${move}px` };
-        else return { left: `${move - 100}px` };
-      },
-      hover: () => {
-        console.log(controls, "controls");
-        controls.stop();
-        // if (hover) return;
-        // setHover(true);
-        // return { left: `-${move - 500}px` };
-      },
-    }),
+  // const variants = React.useMemo(
+  //   () => ({
+  //     hide: () => {
+  //       console.log(move, "move1");
 
-    [move]
-  );
+  //       if (move === 0) return;
+  //       else return { left: `${move}px` };
+  //     },
+  //     reveal: () => {
+  //       // if (motionRef.current)
+  //       // console.log(motionRef.current.offsetLeft, "move2");
+  //       console.log(move, hover, "move2");
+  //       if (move === 0) return;
+  //       if (hover) return { left: `${move}px` };
+  //       else return { left: `${move - 100}px` };
+  //     },
+  //     hover: () => {
+  //       console.log(controls, "controls");
+  //       controls.stop();
+  //       // if (hover) return;
+  //       // setHover(true);
+  //       // return { left: `-${move - 500}px` };
+  //     },
+  //   }),
 
-  useEffect(() => {
-    // setInterval(() => {
-    //   console.log('setInterval');
-    //   const temp = [...items];
-    //   temp.push(temp.shift());
-    //   setItems(temp);
-    // }, 1000);
-    // return () =>
-    //   setInterval(() => {
-    //     const first = items.shift();
-    //     items.push(first);
-    //   }, 1000);
-    // if (motionRef && motionRef.current) {
-    //   motionRef.current.addEventListener('');
-    // }
-  }, []);
+  //   [move]
+  // );
+
   const changeMove = () => {
     console.log(move, "setmove");
-    setMove((prev) => prev - 100);
+    setMove((prev) => prev - slideWidth);
+    popIndex.current += 1;
   };
   useEffect(() => {
-    moveTimerRef.current = setInterval(changeMove, 1000);
-    console.log(moveTimerRef.current, "moveInterval");
-    return () => clearInterval(moveTimerRef.current);
+    moveTimer.current = setInterval(changeMove, duration * 1000);
+    console.log(moveTimer.current, "moveInterval");
+    return () => clearInterval(moveTimer.current);
   }, []);
   // useEffect(() => {
   //   if (!hover) return;
@@ -168,13 +157,12 @@ export default function Test() {
   //     }, 2000);
   // }, []);
   useEffect(() => {
-    console.log(motionRef, "motionRef");
-    if ((move / 100) % 2) return;
     onclick();
-  }, [move]);
+    console.log(popIndex.current, "popIndex");
+  }, [popIndex.current]);
   useEffect(() => {
     controls.set({ left: `${move}px` });
-    controls.start({ left: `${move - 100}px` });
+    controls.start({ left: `${move - slideWidth}px` });
   }, [move]);
 
   return (
@@ -190,33 +178,41 @@ export default function Test() {
           <motion.div
             ref={motionRef}
             style={{ display: "flex", position: "absolute" }}
-            variants={variants}
+            // variants={variants}
             // initial="hide"
             // animate="reveal"
-            whileHover="hover"
+            // whileHover="hover"`
             animate={controls}
-            onMouseEnter={() => {
+            onHoverStart={() => {
               controls.stop();
-              clearInterval(moveTimerRef.current);
+              clearInterval(moveTimer.current);
 
-              console.log("onMouseEnter");
+              console.log(move, "onMouseEnter");
             }}
-            onMouseLeave={() => {
-              controls.start({ left: `${move - 100}px` });
-              moveTimerRef.current = setInterval(changeMove, 1000);
+            onHoverEnd={() => {
+              console.log(motionRef.current.offsetLeft, move, "mouse");
+              RestPopIndex.current +=
+                (move - motionRef.current.offsetLeft) / slideWidth;
+              if (RestPopIndex.current >= 1) {
+                popIndex.current++;
+                RestPopIndex.current--;
+              }
+              setMove(motionRef.current.offsetLeft);
+              moveTimer.current = setInterval(changeMove, duration * 1000);
             }}
             transition={{
               delay: 0,
-              duration: 1,
+              duration: duration,
               // repeat: Infinity,
               // repeatDelay: 0,
               ease: "linear",
             }}
           >
             {items?.map((item, index) => {
-              if (item === null) return <div style={{ width: "200px" }}></div>;
+              if (item === null)
+                return <div style={{ width: slideWidth }}></div>;
               return (
-                <div style={{ border: "1px solid red", width: "200px" }}>
+                <div style={{ border: "1px solid red", width: slideWidth }}>
                   <img src={item.source.default} alt={item.title} />
                   <div>
                     <h1>{item.title}</h1>

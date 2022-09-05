@@ -6,6 +6,7 @@ import {
   FiveStone,
   HomeBestOfBestList,
   HomeBestOfBestList2,
+  ThreeD,
 } from "./pages";
 import Header from "./components/Header";
 
@@ -18,7 +19,7 @@ function App() {
         <Route path="/1" element={<Rsp />} />
         <Route path="/2" element={<FiveStone />} />
         <Route path="/3" element={<HomeBestOfBestList />} />
-        <Route path="/4" element={<HomeBestOfBestList2 />} />
+        <Route path="/4" element={<ThreeD />} />
       </Routes>
     </BrowserRouter>
   );
