@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
 import Scene from "../components/Three/Scene";
 import styled from "styled-components";
-import { motion, useDragControls } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 
 const textMotion = {
   rest: {
@@ -40,15 +40,39 @@ const slashMotion = {
 
 const HoverTest = () => {
   const [isHovered, setIsHovered] = useState(false);
-  const controls = useDragControls();
+  const controls = useAnimationControls();
 
   function startDrag(event) {
     controls.start(event, { snapToCursor: true });
 
     controls.start(event);
   }
+  useEffect(() => {
+    controls.set({ left: `${0}px` });
+    controls.start({ left: `50%` });
+  }, []);
+  window.addEventListener("keydown", (e) => {
+    console.log(e, "keydown");
+    switch (e.code) {
+      case "ArrowUp":
+        console.log("ArrowUp", "keydown");
+        break;
+      case "ArrowLeft":
+        console.log("ArrowLeft", "keydown");
+        break;
+      default:
+        return;
+    }
+  });
+  
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        border: "1px solid red",
+      }}
+    >
       {/* <Container initial="rest" whileHover="hover" animate="rest">
         <SlashContainer variants={slashMotion}>
           <svg width="1em" height="1em" viewBox="0 0 27 50">
@@ -70,8 +94,19 @@ const HoverTest = () => {
 
         {/* <Scene isHovered={isHovered} /> */}
       </motion.button>
-      <div onPointerDown={startDrag}>v</div>
-      <motion.div drag="x" dragControls={controls} />
+      <motion.div
+        style={{ display: "flex", position: "absolute" }}
+        animate={controls}
+        transition={{
+          delay: 0,
+          duration: 5,
+          // repeat: Infinity,
+          // repeatDelay: 0,
+          ease: "linear",
+        }}
+      >
+        V
+      </motion.div>
     </div>
   );
 };
