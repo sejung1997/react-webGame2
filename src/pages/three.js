@@ -41,36 +41,70 @@ const slashMotion = {
 const HoverTest = () => {
   const [isHovered, setIsHovered] = useState(false);
   const controls = useAnimationControls();
-
+  const [currentLocation, setCurrentLocation] = useState([100, 100]);
+  const [pastLocation, setPastLocation] = useState([0, 0]);
   function startDrag(event) {
     controls.start(event, { snapToCursor: true });
 
     controls.start(event);
   }
-  useEffect(() => {
-    controls.set({ left: `${0}px` });
-    controls.start({ left: `50%` });
-  }, []);
-  window.addEventListener("keydown", (e) => {
-    console.log(e, "keydown");
+  const up = () => {
+    const temp = [...currentLocation];
+    console.log(temp, "up");
+
+    setPastLocation(temp);
+    temp[1] += 100;
+    console.log(temp, "up");
+
+    setCurrentLocation(temp);
+  };
+
+  const keyDown = (e) => {
     switch (e.code) {
       case "ArrowUp":
-        console.log("ArrowUp", "keydown");
+        console.log(currentLocation, "up1");
+        up();
         break;
       case "ArrowLeft":
         console.log("ArrowLeft", "keydown");
         break;
+      case "ArrowRight":
+        console.log("ArrowRight", "keydown");
+        break;
+      case "ArrowDown":
+        console.log("ArrowDown", "keydown");
+        break;
       default:
+        console.log("default", "keydown");
         return;
     }
-  });
-  
+  };
+  useEffect(() => {
+    window.addEventListener("keydown", keyDown);
+    return () => window.removeEventListener("keydown", keyDown);
+  }, []);
+
+  useEffect(() => {
+    console.log(currentLocation, "currentLocation");
+    controls.set({
+      left: `${pastLocation[0]}px`,
+      top: `${pastLocation[1]}px`,
+    });
+    controls.start({
+      left: `${currentLocation[0]}px`,
+      top: `${currentLocation[1]}px`,
+    });
+  }, [currentLocation]);
   return (
     <div
       style={{
         display: "flex",
         justifyContent: "center",
         border: "1px solid red",
+        width: "3000px",
+        margin: "auto",
+        height: "3000px",
+        position: "relative",
       }}
     >
       {/* <Container initial="rest" whileHover="hover" animate="rest">
@@ -85,21 +119,21 @@ const HoverTest = () => {
         </SlashContainer>
         <motion.div variants={textMotion}>Hover me!</motion.div>
       </Container> */}
-      <motion.button
-        whileHover={{ scale: 2 }}
-        // onHoverStart={() => setIsHovered(true)}
-        // onHoverEnd={() => setIsHovered(true)}
+      {/* <motion.button
+      // whileHover={{ scale: 2 }}
+      // onHoverStart={() => setIsHovered(true)}
+      // onHoverEnd={() => setIsHovered(true)}
       >
         <div>c</div>
 
-        {/* <Scene isHovered={isHovered} /> */}
-      </motion.button>
+        <Scene isHovered={isHovered} />
+      </motion.button> */}
       <motion.div
         style={{ display: "flex", position: "absolute" }}
         animate={controls}
         transition={{
           delay: 0,
-          duration: 5,
+          duration: 1,
           // repeat: Infinity,
           // repeatDelay: 0,
           ease: "linear",
