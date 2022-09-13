@@ -161,7 +161,7 @@ const SlashContainer = styled(motion.div)`
   transform: translateY(-50%);
 
   svg {
-    width: auto; a
+    width: auto;
     height: 50px;
     object-fit: scale-down;
   }
