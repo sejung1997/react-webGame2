@@ -87,7 +87,7 @@ const slideWidth = 200;
 const duration = 2;
 export default function Test() {
   const [items, setItems] = useState(item);
-  const [move, setMove] = useState(0);
+  const [move, setMove] = useState(-slideWidth);
   const motionRef = useRef(null);
   const moveTimer = useRef(null);
   const RestPopIndex = useRef(0);
@@ -101,7 +101,7 @@ export default function Test() {
     temp.push(temp[popIndex.current]);
     temp[popIndex.current] = null;
     setItems(temp);
-  }, [popIndex.current, items]);
+  }, [popIndex.current]);
 
   // const variants = React.useMemo(
   //   () => ({
@@ -212,7 +212,7 @@ export default function Test() {
               if (item === null)
                 return <div style={{ width: slideWidth }}></div>;
               return (
-                <div style={{ border: "1px solid red", width: slideWidth }}>
+                <div style={{ width: slideWidth }}>
                   <img src={item.source.default} alt={item.title} />
                   <div>
                     <h1>{item.title}</h1>
