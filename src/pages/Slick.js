@@ -82,9 +82,9 @@ const item = [
   },
 ];
 // 슬라이드 넓이 + 여백 설정
-const slideWidth = 200;
+const slideWidth = 420;
 // slideWidth를 몇 초 동안 이동할지 설정
-const duration = 2;
+const duration = 8;
 export default function Test() {
   const [items, setItems] = useState(item);
   const [move, setMove] = useState(-slideWidth);
@@ -101,7 +101,7 @@ export default function Test() {
     temp.push(temp[popIndex.current]);
     temp[popIndex.current] = null;
     setItems(temp);
-  }, [popIndex.current]);
+  }, [popIndex.current, items]);
 
   // const variants = React.useMemo(
   //   () => ({
@@ -141,43 +141,43 @@ export default function Test() {
     console.log(moveTimer.current, "moveInterval");
     return () => clearInterval(moveTimer.current);
   }, []);
-  // useEffect(() => {
-  //   if (!hover) return;
-  //   console.log(moveInterval, "moveInterval");
 
-  //   return clearInterval(moveInterval);
-  // }, [hover]);
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     if (!hover) setTime((prev) => prev + 1);
-  //   }, 2000);
-  //   return () =>
-  //     setInterval(() => {
-  //       setTime((prev) => prev + 1);
-  //     }, 2000);
-  // }, []);
   useEffect(() => {
     onclick();
     console.log(popIndex.current, "popIndex");
   }, [popIndex.current]);
+
   useEffect(() => {
-    controls.set({ left: `${move}px` });
-    controls.start({ left: `${move - slideWidth}px` });
+    console.log(move, "setmove1");
+
+    // controls.set({ left: `${move}px` });
+    controls.set({ x: move });
+    // controls.start({ left: `${move - slideWidth}px` });
+    controls.start({ x: move - slideWidth });
   }, [move]);
 
   return (
     <AnimatePresence>
-      <div style={{ display: "flex", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <div
           style={{
             position: "relative",
             border: "1px solid red",
             width: "1720px",
+            height: "400px",
           }}
         >
           <motion.div
             ref={motionRef}
-            style={{ display: "flex", position: "absolute" }}
+            style={{
+              display: "flex",
+              position: "absolute",
+            }}
             // variants={variants}
             // initial="hide"
             // animate="reveal"
@@ -191,13 +191,16 @@ export default function Test() {
             }}
             onHoverEnd={() => {
               console.log(motionRef.current.offsetLeft, move, "mouse");
-              RestPopIndex.current +=
-                (move - motionRef.current.offsetLeft) / slideWidth;
+              const temp = motionRef.current.style.webkitTransform.search("px");
+              const temp2 = Number(
+                motionRef.current.style.webkitTransform.slice(11, temp)
+              );
+              RestPopIndex.current += (move - temp2) / slideWidth;
               if (RestPopIndex.current >= 1) {
                 popIndex.current++;
                 RestPopIndex.current--;
               }
-              setMove(motionRef.current.offsetLeft);
+              setMove(temp2);
               moveTimer.current = setInterval(changeMove, duration * 1000);
             }}
             transition={{
@@ -210,13 +213,25 @@ export default function Test() {
           >
             {items?.map((item, index) => {
               if (item === null)
-                return <div style={{ width: slideWidth }}></div>;
+                return (
+                  <div style={{ width: "360px", marginRight: "60px" }}></div>
+                );
               return (
-                <div style={{ width: slideWidth }}>
-                  <img src={item.source.default} alt={item.title} />
+                <div
+                  style={{
+                    width: "360px",
+                    marginRight: "60px",
+                    backgroundColor: "yellow",
+                  }}
+                >
+                  <img
+                    src="/img/0.jpg"
+                    alt={item.title}
+                    style={{ width: "300px" }}
+                  />
                   <div>
                     <h1>{item.title}</h1>
-                    <h2>h2h2h2h2h2h2h2</h2>
+                    <h2>{index}</h2>
                     <h3>h3h3h3h3h3h3h3</h3>
                   </div>
                   <div className="additional">additional text</div>
