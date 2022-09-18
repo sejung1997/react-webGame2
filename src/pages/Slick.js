@@ -84,7 +84,7 @@ const item = [
 // 슬라이드 넓이 + 여백 설정
 const slideWidth = 420;
 // slideWidth를 몇 초 동안 이동할지 설정
-const duration = 8;
+const duration = 2;
 export default function Test() {
   const [items, setItems] = useState(item);
   const [move, setMove] = useState(-slideWidth);
@@ -225,7 +225,7 @@ export default function Test() {
                   }}
                 >
                   <img
-                    src="/img/0.jpg"
+                    src="/img/0.png"
                     alt={item.title}
                     style={{ width: "300px" }}
                   />
