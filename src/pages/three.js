@@ -100,34 +100,9 @@ const HoverTest = () => {
       style={{
         display: "flex",
         justifyContent: "center",
-        border: "1px solid red",
-        width: "3000px",
-        margin: "auto",
-        height: "3000px",
-        position: "relative",
       }}
     >
-      {/* <Container initial="rest" whileHover="hover" animate="rest">
-        <SlashContainer variants={slashMotion}>
-          <svg width="1em" height="1em" viewBox="0 0 27 50">
-            <path
-              fill="#154FFF"
-              d="M21.177 0L0 50h5.818L26.995 0z"
-              fillRule="evenodd"
-            />
-          </svg>
-        </SlashContainer>
-        <motion.div variants={textMotion}>Hover me!</motion.div>
-      </Container> */}
-      {/* <motion.button
-      // whileHover={{ scale: 2 }}
-      // onHoverStart={() => setIsHovered(true)}
-      // onHoverEnd={() => setIsHovered(true)}
-      >
-        <div>c</div>
-
-        <Scene isHovered={isHovered} />
-      </motion.button> */}
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((el) => el)}
       <motion.div
         style={{ display: "flex", position: "absolute" }}
         animate={controls}
@@ -145,24 +120,3 @@ const HoverTest = () => {
   );
 };
 export default HoverTest;
-
-const Container = styled(motion.div)`
-  position: relative;
-  max-width: 200px;
-  cursor: pointer;
-`;
-
-const SlashContainer = styled(motion.div)`
-  position: absolute;
-  top: 50%;
-  left: 0;
-  opacity: 0;
-
-  transform: translateY(-50%);
-
-  svg {
-    width: auto;
-    height: 50px;
-    object-fit: scale-down;
-  }
-`;
