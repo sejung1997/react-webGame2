@@ -4,3 +4,4 @@ export { default as FiveStone } from "./FiveStone";
 export { default as HomeBestOfBestList } from "./Slick";
 export { default as HomeBestOfBestList2 } from "./slick2";
 export { default as ThreeD } from "./three";
+export { default as Calendar } from "./Calendar";
