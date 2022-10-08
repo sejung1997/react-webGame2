@@ -1,14 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 const menuTitle = [
-  "구구단",
+  "",
   // "끝말잇기",
   // "숫자야구",
   // "반응속도체크",
-  "가위바위보",
-  "오목",
-  "기차",
-  "ThreeD",
+  "",
+  "",
+  "",
+  "",
   "달력",
   // "로또",
   // "틱택토",
@@ -42,7 +42,7 @@ export default function Header() {
       }}
     >
       <nav>
-        <h2>Web Game</h2>
+        <h2></h2>
       </nav>
       <nav
         style={{

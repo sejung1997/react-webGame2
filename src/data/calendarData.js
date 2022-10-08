@@ -43,15 +43,6 @@ export const data = [
     extra1: "FEMALE",
     extra2: null,
   },
-
-  {
-    date1: "2022-10-01",
-    date2: null,
-    cnt: 0,
-    weekNum: 0,
-    extra1: "FEMALE",
-    extra2: null,
-  },
   {
     date1: "2022-10-01",
     date2: null,
