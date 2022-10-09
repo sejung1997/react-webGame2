@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import moment from "moment";
 import { data } from "../data/calendarData";
+import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
+
 // sate 초기화
 const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -20,6 +22,23 @@ const sumOfYear = () => {
   return temp;
 };
 
+// export const createCalendar = (date) => {
+//   const year = date.getFullYear();
+//   const month = date.getMonth();
+//   const startDay = new Date(year, month, 1).getDay();
+//   const endDate = new Date(year, month + 1, 0).getDate();
+//   const emptyDays = new Array(startDay).fill(null);
+//   const calendar = [emptyDays];
+//   for (let i = 1; i <= endDate; i++) {
+//     if (calendar.at(-1).length === 7) calendar.push([]);
+//     calendar.at(-1).push(String(i));
+//   }
+
+//   while (calendar.at(-1).length !== 7) {
+//     calendar.at(-1).push(null);
+//   }
+//   return calendar;
+// // };
 export default function Calendar() {
   const date = new Date();
 
@@ -45,6 +64,7 @@ export default function Calendar() {
 
     // while문 초기세팅
     let calendarMonthStartDay = new Date(year, month - 1, 1).getDay();
+
     const initialDataIndex = data.findIndex(
       (el) => el.date1 === `${year}-${String(month).padStart(2, "0")}-01`
     );
