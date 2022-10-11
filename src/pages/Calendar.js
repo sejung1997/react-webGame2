@@ -3,15 +3,11 @@ import moment from "moment";
 import { data } from "../data/calendarData";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
 
-// sate 초기화
-const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
+// 월별 총 합
 const sumOfYear = () => {
   let initDay = data[0].date1.slice(0, 7);
-  console.log(initDay.slice(5, 7));
   let temp = {};
   data.reduce((p, c) => {
-    console.log(p, c, "ddd");
     if (initDay !== c.date1.slice(0, 7)) {
       if (!temp[initDay.slice(0, 4)]) temp[initDay.slice(0, 4)] = new Array(12);
       temp[initDay.slice(0, 4)][Number(initDay.slice(5, 7) - 1)] = p;
@@ -22,92 +18,61 @@ const sumOfYear = () => {
   return temp;
 };
 
-// export const createCalendar = (date) => {
-//   const year = date.getFullYear();
-//   const month = date.getMonth();
-//   const startDay = new Date(year, month, 1).getDay();
-//   const endDate = new Date(year, month + 1, 0).getDate();
-//   const emptyDays = new Array(startDay).fill(null);
-//   const calendar = [emptyDays];
-//   for (let i = 1; i <= endDate; i++) {
-//     if (calendar.at(-1).length === 7) calendar.push([]);
-//     calendar.at(-1).push(String(i));
-//   }
-
-//   while (calendar.at(-1).length !== 7) {
-//     calendar.at(-1).push(null);
-//   }
-//   return calendar;
-// // };
 export default function Calendar() {
   const date = new Date();
 
   const [month, setMonth] = useState(date.getMonth() + 1);
   const [year, setYear] = useState(date.getFullYear());
-  const [calendarData, setCalendarData] = useState([
-    [null, null, null, null, null, null, null],
-  ]);
+  const [calendarData, setCalendarData] = useState([]);
 
   const AllDataOfYear = useMemo(() => {
-    return sumOfYear()[`${year}`];
+    const sum = sumOfYear();
+    return sum[`${year}`];
   }, [year]);
 
-  console.log(AllDataOfYear);
   const makingCalendar = () => {
-    // 윤년 세팅
-    if (month === 2) {
-      console.log("2222");
-      if (year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0))
-        monthDays[1] = 29;
-      else monthDays[1] = 28;
-    }
-
     // while문 초기세팅
-    let calendarMonthStartDay = new Date(year, month - 1, 1).getDay();
+    let startDay = new Date(year, month - 1, 1).getDay();
+    const endDate = new Date(year, month, 0).getDate();
 
     const initialDataIndex = data.findIndex(
       (el) => el.date1 === `${year}-${String(month).padStart(2, "0")}-01`
     );
-    let number = 1;
-    const temp = [[null, null, null, null, null, null, null]];
-    let weekIndex = 0;
+    const emptyDays = new Array(startDay).fill(null);
+    const calendar = [emptyDays];
     let weekSum = 0;
+    console.log(startDay, emptyDays, calendar, endDate);
 
-    while (number <= monthDays[month - 1]) {
-      const dayIndex = calendarMonthStartDay % 8;
-      if (!temp[weekIndex]) {
-        temp[weekIndex] = [null, null, null, null, null, null, null];
-      }
-
-      if (dayIndex === 7) {
-        temp[weekIndex][7] = {
+    for (let i = 1; i <= endDate; i++) {
+      const cnt =
+        initialDataIndex - (i - 1) >= 0
+          ? data[initialDataIndex - (i - 1)].cnt
+          : 0;
+      calendar.at(-1).push({
+        date: i,
+        cnt,
+      });
+      weekSum += cnt;
+      if (calendar.at(-1).length === 7) {
+        calendar.at(-1)[7] = {
           date: null,
           cnt: weekSum,
         };
-        calendarMonthStartDay = 0;
-        weekIndex++;
         weekSum = 0;
-      } else {
-        const cnt =
-          initialDataIndex - (number - 1) >= 0
-            ? data[initialDataIndex - (number - 1)].cnt
-            : 0;
-        temp[weekIndex][dayIndex] = {
-          date: number,
-          cnt,
-        };
-        calendarMonthStartDay++;
-        weekSum += cnt;
-        number++;
-        if (number === monthDays[month - 1])
-          temp[weekIndex][7] = {
-            date: null,
-            cnt: weekSum,
-          };
+        calendar.push([]);
       }
     }
-    console.log(temp, "dayArr");
-    setCalendarData(temp);
+    while (calendar.at(-1).length !== 8) {
+      if (calendar.at(-1).length === 7) {
+        calendar.at(-1).push({
+          date: null,
+          cnt: weekSum,
+        });
+      } else calendar.at(-1).push(null);
+    }
+
+    console.log(calendar, "dayArr");
+    setCalendarData(calendar);
   };
 
   useEffect(() => {

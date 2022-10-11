@@ -1,13 +1,8 @@
 export const data = [
   {
     date1: "2022-10-06",
-    date2: null,
     cnt: 2,
-    weekNum: 0,
-    extra1: "FEMALE",
-    extra2: null,
   },
-
   {
     date1: "2022-10-05",
     date2: null,
