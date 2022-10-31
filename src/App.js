@@ -8,6 +8,7 @@ import {
   HomeBestOfBestList2,
   Calendar,
   ThreeD,
+  PlayBoard,
 } from "./pages";
 import Header from "./components/Header";
 
@@ -21,7 +22,8 @@ function App() {
         <Route path="/2" element={<FiveStone />} />
         <Route path="/3" element={<HomeBestOfBestList />} />
         <Route path="/4" element={<ThreeD />} />
-        <Route path="/5" element={<Calendar />} />
+        {/* <Route path="/5" element={<Calendar />} /> */}
+        <Route path="/6" element={<PlayBoard />} />
       </Routes>
     </BrowserRouter>
   );
