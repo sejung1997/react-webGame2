@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useState, useRef } from "react";
+import styled from "styled-components";
 const calculate = (column, row) => {};
 
 const soldier = (part, curLoc) => [
@@ -7,39 +7,138 @@ const soldier = (part, curLoc) => [
   [0, 1],
   [0, -1],
 ];
-
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+`;
 const car = [];
-const init = () => {
-  const temp = Array.from({ length: 10 }, () => Array.from({ length: 9 }));
-  new Array(5).fill("쫄").forEach((el, index) => (temp[3][index * 2 + 1] = el));
-};
+
+const board = Array.from({ length: 8 }, () => new Array(9).fill(""));
+// new Array(5).fill("兵").forEach((el, index) => (temp[3][index * 2] = el));
+// temp[0] = ["車", "馬", "象", "士", "", "士", "象", "馬", "車"];
+// temp[1][4] = "漢";
+// temp[2][1] = "弓";
+// temp[2][7] = "弓";
+// return [
+//   ...temp,
+//   new Array(9).fill(""),
+//   new Array(9).fill(""),
+//   ...temp.reverse(),
+// ];
+// return temp;
+
 export const PlayBoard = () => {
-  const [board, setBoard] = useState([]);
+  // const [board, setBoard] = useState(init());
+  const [possibleMove, setPossibleMove] = useState([]);
+  const [han, setHan] = useState([
+    { 車: [0, 0] },
+    { 馬: [1, 0] },
+    { 象: [2, 0] },
+    { 士: [3, 0] },
+    { 士: [5, 0] },
+    { 象: [6, 0] },
+    { 馬: [7, 0] },
+    { 車: [8, 0] },
+    { 漢: [4, 1] },
+    { 弓: [1, 2] },
+    { 弓: [7, 2] },
+    { 兵: [0, 3] },
+    { 兵: [2, 3] },
+    { 兵: [4, 3] },
+    { 兵: [6, 3] },
+    { 兵: [8, 3] },
+  ]);
+  const moveEl = useRef([]);
+
   useEffect(() => {
-    setBoard(temp);
-  }, []);
+    console.log(moveEl);
+  }, [moveEl]);
+
+  // const han = [];
+  // const cho = [
+  //   {包}
+  //   {차}
+  //   {楚}
+  // ]
+  const onClickObject = (index, target) => {
+    switch (target) {
+      case "車":
+    }
+    console.log(moveEl);
+  };
   console.log(board, "board");
+  const onClickMove = () => {
+    setHan([
+      { 車: [1, 1] },
+      { 馬: [2, 1] },
+      { 象: [3, 1] },
+      { 士: [4, 1] },
+      { 士: [6, 1] },
+      { 象: [7, 1] },
+      { 馬: [8, 1] },
+      { 車: [9, 1] },
+      { 漢: [5, 2] },
+      { 弓: [2, 3] },
+      { 弓: [8, 3] },
+      { 兵: [1, 4] },
+      { 兵: [3, 4] },
+      { 兵: [5, 4] },
+      { 兵: [7, 4] },
+      { 兵: [9, 4] },
+    ]);
+  };
   return (
-    <div
-      style={{
-        display: "grid",
-        width: "500px",
-        height: "500px",
-        position: "relative",
-        gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr ",
-      }}
-    >
-      {board.map((el) =>
-        el.map((e, i) => (
-          <div style={{ border: "1px solid red" }}>
-            {e}jh\
-            {i}
-          </div>
-        ))
-      )}
-      <div style={{ position: "absolute", translateX: 150, translateY: 150 }}>
-        ㅊ
+    <Container>
+      <div
+        style={{
+          padding: "30px",
+          border: "1px solid red",
+          display: "grid",
+          position: "relative",
+          gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
+        }}
+      >
+        {board.map((el, index) =>
+          el.map((e, i) => (
+            <div
+              style={{
+                border: "1px solid red",
+                width: "50px",
+                height: "50px",
+                boxSizing: "border-box",
+              }}
+            ></div>
+          ))
+        )}
+        {han.map((el, index) => {
+          console.log(el[Object.keys(el)][0], el[Object.keys(el)][1]);
+          return (
+            <div
+              onClick={onClickObject(index)}
+              ref={(el) => (moveEl.current[index] = el)}
+              style={{
+                position: "absolute",
+                left: `${50 * el[Object.keys(el)][0] + 15}px`,
+                top: `${50 * el[Object.keys(el)][1] + 15}px`,
+                border: "1px solid black",
+                transition: "2s",
+                borderRadius: 50,
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 5,
+                boxSizing: "border-box",
+                backgroundColor: "#Ffff",
+              }}
+            >
+              {Object.keys(el)}
+            </div>
+          );
+        })}
       </div>
-    </div>
+      <button onClick={onClickMove}>move</button>
+    </Container>
   );
 };
