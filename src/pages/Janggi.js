@@ -48,18 +48,30 @@ export const PlayBoard = () => {
     { 兵: [6, 3] },
     { 兵: [8, 3] },
   ]);
+  const [cho, setCho] = useState([
+    { 車: [0, 9] },
+    { 馬: [1, 9] },
+    { 象: [2, 9] },
+    { 士: [3, 9] },
+    { 士: [5, 9] },
+    { 象: [6, 9] },
+    { 馬: [7, 9] },
+    { 車: [8, 9] },
+    { 漢: [4, 8] },
+    { 弓: [1, 7] },
+    { 弓: [7, 7] },
+    { 卒: [0, 6] },
+    { 卒: [2, 6] },
+    { 卒: [4, 6] },
+    { 卒: [6, 6] },
+    { 卒: [8, 6] },
+  ]);
   const moveEl = useRef([]);
 
   useEffect(() => {
     console.log(moveEl);
   }, [moveEl]);
 
-  // const han = [];
-  // const cho = [
-  //   {包}
-  //   {차}
-  //   {楚}
-  // ]
   const onClickObject = (index, target) => {
     switch (target) {
       case "車":
@@ -92,7 +104,7 @@ export const PlayBoard = () => {
       <div
         style={{
           padding: "30px",
-          border: "1px solid red",
+          border: "1px solid gray",
           display: "grid",
           position: "relative",
           gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
@@ -102,7 +114,7 @@ export const PlayBoard = () => {
           el.map((e, i) => (
             <div
               style={{
-                border: "1px solid red",
+                border: "1px solid gray",
                 width: "50px",
                 height: "50px",
                 boxSizing: "border-box",
@@ -120,7 +132,34 @@ export const PlayBoard = () => {
                 position: "absolute",
                 left: `${50 * el[Object.keys(el)][0] + 15}px`,
                 top: `${50 * el[Object.keys(el)][1] + 15}px`,
-                border: "1px solid black",
+                border: "1px solid brown",
+                transition: "2s",
+                borderRadius: 50,
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 5,
+                boxSizing: "border-box",
+                backgroundColor: "#Ffff",
+              }}
+            >
+              {Object.keys(el)}
+            </div>
+          );
+        })}
+        {cho.map((el, index) => {
+          console.log(el[Object.keys(el)][0], el[Object.keys(el)][1]);
+          return (
+            <div
+              onClick={onClickObject(index)}
+              ref={(el) => (moveEl.current[index] = el)}
+              style={{
+                position: "absolute",
+                left: `${50 * el[Object.keys(el)][0] + 15}px`,
+                top: `${50 * el[Object.keys(el)][1] + 15}px`,
+                border: "1px solid green",
                 transition: "2s",
                 borderRadius: 50,
                 width: "30px",
@@ -138,7 +177,7 @@ export const PlayBoard = () => {
           );
         })}
       </div>
-      <button onClick={onClickMove}>move</button>
+      {/* <button onClick={onClickMove}>move</button> */}
     </Container>
   );
 };
