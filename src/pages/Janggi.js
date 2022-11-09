@@ -26,7 +26,23 @@ const board = Array.from({ length: 8 }, () => new Array(9).fill(""));
 //   ...temp.reverse(),
 // ];
 // return temp;
-
+const emptyCheck = (direction, position, ...vacancy) => {
+  const nextPosition = position + direction;
+  if (
+    nextPosition < 0 ||
+    nextPosition > 91 ||
+    Math.floor(position / 9) !== Math.floor(nextPosition / 9)
+  )
+    return vacancy;
+  if (!playGround[position + direction])
+    emptyCheck(direction * 2, position, ...vacancy, nextPosition);
+};
+const jumpMove = (position, playGround, type) => {
+  [-1, 1, -9, 9].map((el) => emptyCheck(el, position));
+};
+const move = {
+  車: {},
+};
 export const PlayBoard = () => {
   // const [board, setBoard] = useState(init());
   const [possibleMove, setPossibleMove] = useState([]);
