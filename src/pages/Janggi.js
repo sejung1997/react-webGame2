@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 const calculate = (column, row) => {};
@@ -26,22 +27,54 @@ const board = Array.from({ length: 8 }, () => new Array(9).fill(""));
 //   ...temp.reverse(),
 // ];
 // return temp;
+const outCheck = (position) => {
+  if (position < 0 || position > 91) return true;
+};
 const emptyCheck = (direction, position, ...vacancy) => {
-  const nextPosition = position + direction;
+  const nextPosition = position + direction * ([...vacancy].length + 1);
   if (
-    nextPosition < 0 ||
-    nextPosition > 91 ||
+    outCheck(nextPosition) ||
     Math.floor(position / 9) !== Math.floor(nextPosition / 9)
   )
-    return vacancy;
-  if (!playGround[position + direction])
-    emptyCheck(direction * 2, position, ...vacancy, nextPosition);
+    return [...vacancy];
+  else if (!playGround[position + direction])
+    return emptyCheck(direction, position, ...vacancy, nextPosition);
 };
 const jumpMove = (position, playGround, type) => {
   [-1, 1, -9, 9].map((el) => emptyCheck(el, position));
 };
-const move = {
-  車: {},
+const move = (type, position) => {
+  switch (type) {
+    case "車":
+      return [-1, 1, -9, 9].map((el) => emptyCheck(el, position));
+    case "弓":
+      return [-1, 1, -9, 9].map((el) => {
+        const nextStep = emptyCheck(el, position).at(-1);
+        if (nextStep !== undefined) return emptyCheck(el, nextStep);
+      });
+    case "馬":
+      return [-11, -19, -17, -7, 7, 17, 19, 11].map((el) => {
+        if (!outCheck(position + el)) return position + el
+      });
+      case "象":
+      return [-21, -29, -25, -15, 15, 25, 29, 21].map((el) => {
+        if (!outCheck(position + el)) return position + el
+      })
+      case '兵' : return [-1,1,9].map((el) => {
+        if (!outCheck(position + el)) return position + el
+      })
+      case '卒' : return [-1,1,-9].map((el) => {
+        if (!outCheck(position + el)) return position + el
+      })
+      case '漢' : return [3,4,5,12,13,14,21,22,23].map((el) => {
+        if (Math.abs((el-position)%9)<2 && ) return el
+      })
+      case '卒' : return [-1,1,-9].map((el) => {
+        if (!outCheck(position + el)) return position + el
+      })
+    default:
+      return;
+  }
 };
 export const PlayBoard = () => {
   // const [board, setBoard] = useState(init());
