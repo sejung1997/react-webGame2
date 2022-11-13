@@ -1,20 +1,9 @@
 /* eslint-disable array-callback-return */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import styled from "styled-components";
-const calculate = (column, row) => {};
 
-const soldier = (part, curLoc) => [
-  [curLoc + part, 0],
-  [0, 1],
-  [0, -1],
-];
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-const car = [];
 
-const board = Array.from({ length: 8 }, () => new Array(9).fill(""));
+const board = Array.from({ length: 8 }, () => new Array(8).fill(""));
 // new Array(5).fill("兵").forEach((el, index) => (temp[3][index * 2] = el));
 // temp[0] = ["車", "馬", "象", "士", "", "士", "象", "馬", "車"];
 // temp[1][4] = "漢";
@@ -28,126 +17,111 @@ const board = Array.from({ length: 8 }, () => new Array(9).fill(""));
 // ];
 // return temp;
 const outCheck = (position) => {
-  if (position < 0 || position > 91) return true;
+  if (position < 0 || position > 89) return true;
 };
-const emptyCheck = (direction, position, ...vacancy) => {
-  const nextPosition = position + direction * ([...vacancy].length + 1);
-  if (
-    outCheck(nextPosition) ||
-    Math.floor(position / 9) !== Math.floor(nextPosition / 9)
-  )
-    return [...vacancy];
-  else if (!playGround[position + direction])
-    return emptyCheck(direction, position, ...vacancy, nextPosition);
-};
-const jumpMove = (position, playGround, type) => {
-  [-1, 1, -9, 9].map((el) => emptyCheck(el, position));
-};
-const move = (type, position) => {
-  switch (type) {
-    case "車":
-      return [-1, 1, -9, 9].map((el) => emptyCheck(el, position));
-    case "弓":
-      return [-1, 1, -9, 9].map((el) => {
-        const nextStep = emptyCheck(el, position).at(-1);
-        if (nextStep !== undefined) return emptyCheck(el, nextStep);
-      });
-    case "馬":
-      return [-11, -19, -17, -7, 7, 17, 19, 11].map((el) => {
-        if (!outCheck(position + el)) return position + el
-      });
-      case "象":
-      return [-21, -29, -25, -15, 15, 25, 29, 21].map((el) => {
-        if (!outCheck(position + el)) return position + el
-      })
-      case '兵' : return [-1,1,9].map((el) => {
-        if (!outCheck(position + el)) return position + el
-      })
-      case '卒' : return [-1,1,-9].map((el) => {
-        if (!outCheck(position + el)) return position + el
-      })
-      case '漢' : return [3,4,5,12,13,14,21,22,23].map((el) => {
-        if (Math.abs((el-position)%9)<2 && ) return el
-      })
-      case '卒' : return [-1,1,-9].map((el) => {
-        if (!outCheck(position + el)) return position + el
-      })
-    default:
-      return;
-  }
-};
+
 export const PlayBoard = () => {
-  // const [board, setBoard] = useState(init());
-  const [possibleMove, setPossibleMove] = useState([]);
-  const [han, setHan] = useState([
-    { 車: [0, 0] },
-    { 馬: [1, 0] },
-    { 象: [2, 0] },
-    { 士: [3, 0] },
-    { 士: [5, 0] },
-    { 象: [6, 0] },
-    { 馬: [7, 0] },
-    { 車: [8, 0] },
-    { 漢: [4, 1] },
-    { 弓: [1, 2] },
-    { 弓: [7, 2] },
-    { 兵: [0, 3] },
-    { 兵: [2, 3] },
-    { 兵: [4, 3] },
-    { 兵: [6, 3] },
-    { 兵: [8, 3] },
-  ]);
-  const [cho, setCho] = useState([
-    { 車: [0, 9] },
-    { 馬: [1, 9] },
-    { 象: [2, 9] },
-    { 士: [3, 9] },
-    { 士: [5, 9] },
-    { 象: [6, 9] },
-    { 馬: [7, 9] },
-    { 車: [8, 9] },
-    { 漢: [4, 8] },
-    { 弓: [1, 7] },
-    { 弓: [7, 7] },
-    { 卒: [0, 6] },
-    { 卒: [2, 6] },
-    { 卒: [4, 6] },
-    { 卒: [6, 6] },
-    { 卒: [8, 6] },
-  ]);
-  const moveEl = useRef([]);
-
-  useEffect(() => {
-    console.log(moveEl);
-  }, [moveEl]);
-
-  const onClickObject = (index, target) => {
-    switch (target) {
+  // const [board, setBoard] = useState(new Array(9).fill(new Array(9).fill("")));
+  const [pieces, setPieces] = useState({
+    0: ["red", "車"],
+    1: ["red", "馬"],
+    2: ["red", "象"],
+    3: ["red", "士"],
+    5: ["red", "士"],
+    6: ["red", "象"],
+    7: ["red", "馬"],
+    8: ["red", "車"],
+    13: ["red", "漢"],
+    19: ["red", "弓"],
+    25: ["red", "弓"],
+    27: ["red", "兵"],
+    29: ["red", "兵"],
+    31: ["red", "兵"],
+    33: ["red", "兵"],
+    35: ["red", "兵"],
+    45: ["green", "卒"],
+    47: ["green", "卒"],
+    49: ["green", "卒"],
+    51: ["green", "卒"],
+    53: ["green", "卒"],
+    55: ["green", "弓"],
+    61: ["green", "弓"],
+    67: ["green", "椒"],
+    72: ["green", "車"],
+    73: ["green", "馬"],
+    74: ["green", "象"],
+    75: ["green", "士"],
+    77: ["green", "士"],
+    78: ["green", "象"],
+    79: ["green", "馬"],
+    80: ["green", "車"],
+  });
+  const emptyCheck = (direction, position, ...vacancy) => {
+    const nextPosition = position + direction * ([...vacancy].length + 1);
+    if (
+      outCheck(nextPosition) ||
+      Math.floor(position / 9) !== Math.floor(nextPosition / 9)
+    )
+      return [...vacancy];
+    // else if (!playGround[position + direction])
+    return emptyCheck(direction, position, ...vacancy, nextPosition);
+    // else if (playGround[position + direction]) return [...vacancy, nextPosition];
+  };
+  const move = (type, position) => {
+    console.log(type, "onclick");
+    switch (type) {
       case "車":
+        return [-1, 1, -9, 9].map((el) => emptyCheck(el, position));
+      case "弓":
+        return [-1, 1, -9, 9].map((el) => {
+          const nextStep = emptyCheck(el, position).at(-1);
+          if (nextStep !== undefined) return emptyCheck(el, nextStep);
+        });
+      case "馬":
+        return [-11, -19, -17, -7, 7, 17, 19, 11].map((el) => {
+          if (!outCheck(position + el)) return position + el;
+        });
+      case "象":
+        return [-21, -29, -25, -15, 15, 25, 29, 21].map((el) => {
+          if (!outCheck(position + el)) return position + el;
+        });
+      case "兵":
+        return [-1, 1, 9].map((el) => {
+          if (!outCheck(position + el)) return position + el;
+        });
+      case "卒":
+        return [-1, 1, -9].map((el) => {
+          if (!outCheck(position + el)) return position + el;
+        });
+      case "漢":
+        return [3, 4, 5, 12, 13, 14, 21, 22, 23].map((el) => {
+          if (
+            Math.abs((el % 9) - (position % 9)) < 2 &&
+            Math.abs(el - position) <= 10
+          )
+            return el;
+        });
+      case "椒":
+        return [66, 67, 68, 75, 76, 77, 84, 85, 86].map((el) => {
+          if (
+            Math.abs((el % 9) - (position % 9)) < 2 &&
+            Math.abs(el - position) <= 10
+          )
+            return el;
+        });
+      default:
+        return;
     }
-    console.log(moveEl);
+  };
+
+  const onClickObject = (name, position) => {
+    // console.log(name, position, "onClickObject");
+    move(name[1], Number(position)).map((po) =>
+      setPieces({ ...pieces, [po]: [name[0], ""] })
+    );
   };
   console.log(board, "board");
-  const onClickMove = () => {
-    setHan([
-      { 車: [1, 1] },
-      { 馬: [2, 1] },
-      { 象: [3, 1] },
-      { 士: [4, 1] },
-      { 士: [6, 1] },
-      { 象: [7, 1] },
-      { 馬: [8, 1] },
-      { 車: [9, 1] },
-      { 漢: [5, 2] },
-      { 弓: [2, 3] },
-      { 弓: [8, 3] },
-      { 兵: [1, 4] },
-      { 兵: [3, 4] },
-      { 兵: [5, 4] },
-      { 兵: [7, 4] },
-      { 兵: [9, 4] },
-    ]);
-  };
+
   return (
     <Container>
       <div
@@ -156,12 +130,13 @@ export const PlayBoard = () => {
           border: "1px solid gray",
           display: "grid",
           position: "relative",
-          gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr",
+          gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr  1fr",
         }}
       >
         {board.map((el, index) =>
           el.map((e, i) => (
             <div
+              key={e}
               style={{
                 border: "1px solid gray",
                 width: "50px",
@@ -171,17 +146,22 @@ export const PlayBoard = () => {
             ></div>
           ))
         )}
-        {han.map((el, index) => {
-          console.log(el[Object.keys(el)][0], el[Object.keys(el)][1]);
+        {Object.entries(pieces).map((el, index) => {
+          const left = `${12.5 + 50 * (el[0] % 9)}px`;
+          const top = `${12.5 + 50 * Math.floor(el[0] / 9)}px`;
+          console.log(left, top);
           return (
             <div
-              onClick={onClickObject(index)}
-              ref={(el) => (moveEl.current[index] = el)}
+              key={el}
+              onClick={() => {
+                onClickObject(el[1], el[0]);
+              }}
+              // ref={(el) => (moveEl.current[index] = el)}
               style={{
                 position: "absolute",
-                left: `${50 * el[Object.keys(el)][0] + 15}px`,
-                top: `${50 * el[Object.keys(el)][1] + 15}px`,
-                border: "1px solid brown",
+                left: left,
+                top: top,
+                border: `1px solid ${el[1][0]}`,
                 transition: "2s",
                 borderRadius: 50,
                 width: "30px",
@@ -192,36 +172,11 @@ export const PlayBoard = () => {
                 zIndex: 5,
                 boxSizing: "border-box",
                 backgroundColor: "#Ffff",
+                color: el[1][0],
+                cursor: "pointer",
               }}
             >
-              {Object.keys(el)}
-            </div>
-          );
-        })}
-        {cho.map((el, index) => {
-          console.log(el[Object.keys(el)][0], el[Object.keys(el)][1]);
-          return (
-            <div
-              onClick={onClickObject(index)}
-              ref={(el) => (moveEl.current[index] = el)}
-              style={{
-                position: "absolute",
-                left: `${50 * el[Object.keys(el)][0] + 15}px`,
-                top: `${50 * el[Object.keys(el)][1] + 15}px`,
-                border: "1px solid green",
-                transition: "2s",
-                borderRadius: 50,
-                width: "30px",
-                height: "30px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 5,
-                boxSizing: "border-box",
-                backgroundColor: "#Ffff",
-              }}
-            >
-              {Object.keys(el)}
+              {el[1][1]}
             </div>
           );
         })}
